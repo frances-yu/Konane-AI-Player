@@ -17,8 +17,8 @@ class Gamepiece():
     def removed(self):
         self.location = 'None'
 
-temp = Gamepiece('black', 'A1')
+temp = Gamepiece('black', 'a1')
 temp.get_location()
 temp.get_color()
-temp.move_location('A3')
+temp.move_location('a3')
 temp.get_location()
