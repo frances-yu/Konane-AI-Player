@@ -51,6 +51,8 @@ class Game:
             self.previous_move = move
             self.move_count += 1
 
+            #print(self.board.possible_moves())
+
             # Switch turns
             if player_turn == 1:
                 player_turn = 2

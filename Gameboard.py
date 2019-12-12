@@ -96,31 +96,87 @@ class Gameboard:
                 self.set_piece(r, c1, False)
         self.set_piece(r2, c2, True)
 
-    def possible_moves(self):
-        return
+    # Snipers are the validly existing pieces that can potentially jump into (r, c)
+    # this function returns a list of tuples (r, c) of potential snipers
+    def snipers(self, r, c):
+        pieces = []
 
-#   empty = 0, black = 1, white = 2
-#         self.letter_number = {'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7,
-#         'i':8,'j':9,'k':10,'l':11,'m':12,'n':13,'o':14,'p':15,'q':16,'r':17}
-#
-#     def convert_location(self, loc):
-#         col = str(loc[:1])
-#         row = int(loc[1:])
-#         col = self.letter_number.get(col)
-#         row = 18 - row
-#         return col, row
-#
-#     def get_value(self, loc):
-#         col, row = self.convert_location(loc)
-#         val = self.board[row][col]
-#         print(val)
-#
-#     def change_value(self, loc, new_val):
-#         col, row = self.convert_location(loc)
-#         self.board[row][col] = new_val
-#
-#
-# temp = Gameboard(18)
-# temp.get_value('a18')
-# temp.change_value('a18', 0)
-# temp.get_value('a18')
+        neg_r_steps = 0
+        pos_r_steps = 0
+
+        neg_c_steps = 0
+        pos_c_steps = 0
+
+        if r % 2 == 0:
+            neg_r_steps = int(r/2)
+            pos_r_steps = int((self.board_size - (r + 2))/2)
+        else:
+            neg_r_steps = int((r-1)/2)
+            pos_r_steps = int((self.board_size - (r+1))/2)
+
+        if c % 2 == 0:
+            neg_c_steps = int(c/2)
+            pos_c_steps = int((self.board_size - (c + 2))/2)
+        else:
+            neg_c_steps = int((c-1)/2)
+            pos_c_steps = int((self.board_size - (c+1))/2)
+
+        for i in range(0, neg_r_steps):
+            row = r - 2 * (i + 1)
+            col = c
+            if self.is_filled(row, col):
+                pieces.append((row, col))
+        for i in range(0, pos_r_steps):
+            row = r + 2 * (i + 1)
+            col = c
+            if self.is_filled(row, col):
+                pieces.append((row, col))
+        for i in range(0, neg_c_steps):
+            row = r
+            col = c - 2 * (i + 1)
+            if self.is_filled(row, col):
+                pieces.append((row, col))
+        for i in range(0, pos_c_steps):
+            row = r
+            col = c + 2 * (i + 1)
+            if self.is_filled(row, col):
+                pieces.append((row, col))
+
+        return pieces
+
+    # returns list of tuples (r, c) representing all empty tiles
+    def empty_tiles(self):
+        empty = []
+        for row in range(0, self.board_size):
+            for col in range(0, self.board_size):
+                if not self.board[row][col]:
+                    empty_tile = (row, col)
+                    empty.append(empty_tile)
+        return empty
+
+    def possible_moves(self):
+        moves = []
+
+        empty_tiles = self.empty_tiles()
+        for tile in empty_tiles:
+            player = 0
+            r2 = tile[0]
+            c2 = tile[1]
+            if (r2 + c2) % 2 == 0:
+                player = 1
+            else:
+                player = 2
+            sniper_candidates = self.snipers(r2, c2)
+            for s in sniper_candidates:
+                r1 = s[0]
+                c1 = s[1]
+                if self.is_valid_jump(r1, c1, r2, c2, player):
+                    move = [s, tile]
+                    moves.append(move)
+
+        return moves
+
+    def clone(self):
+        copy = Gameboard(self.board_size)
+        copy.board = self.board
+        return copy
