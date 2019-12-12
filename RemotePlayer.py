@@ -2,7 +2,7 @@
 
 from Game import Move
 from Player import Player
-# TODO Import socket shit
+
 
 class RemotePlayer(Player):
     def __init__(self, name, is_top_left):
