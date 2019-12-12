@@ -51,8 +51,6 @@ class Game:
             self.previous_move = move
             self.move_count += 1
 
-            #print(self.board.possible_moves())
-
             # Switch turns
             if player_turn == 1:
                 player_turn = 2
@@ -78,8 +76,7 @@ class Game:
 
     def is_game_over(self):
         # Checks if there are no moves left
-        # TODO return len(self.board.possible_moves()) == 0
-        return False
+        return len(self.board.possible_moves()) == 0
 
     def do_move(self, move):
         # First two moves remove

@@ -38,7 +38,7 @@ class Agent(Player):
             # step size = 2 because player's piece exists every other tile
             for col in range(start, size, 2):
                 # board[row][col]: True if piece, False if not
-                if board[row][col]: count += 1
+                if board.board[row][col]: count += 1
         return count
     def agent_piece_count(self, board):
         return self.pieceCount(board, self.agent)
@@ -66,7 +66,7 @@ class Agent(Player):
     def cornerPieces(self, board, is_player_one):
         all_corners = board.corners
         corner = 0
-        for p in corners:
+        for p in all_corners:
             r, c = p[0], p[1]
             if is_player_one:
                 if (r+c) % 2 == 0 and board.is_filled(r, c): corner += 1
@@ -131,49 +131,27 @@ class Agent(Player):
     # if depth = 1, opp's turn, find min
     # if depth = 2, agent's turn, find max
     # if depth = 3, return score
-    def minimax(self, board, depth, alpha, beta, path):
-        agent_moves = self.agent_move_list(board)
-        opp_moves = self.opp_move_list(board)
-
-        if depth == 3 or len(agent_moves) == 0 or len(opp_moves) == 0:
-            return self.gamescore(board, agent_moves, opp_moves), path
-
-        if depth == 0 or depth == 2:
-            value = -100000
-            finalPath = []
-            for move in agent_moves:
-                newPath = path.copy()
-                newPath.append(move)
-
-                child = board.clone()
-                child.do_jump(move[0][0], move[0][1], move[1][0], move[1][1])
-
-                value, finalPath = max([value, minimax(child, depth+1, alpha, beta, newPath)])
-
-                alpha = max([alpha, value])
-                if alpha >= beta:
-                    break
-            return value, finalPath
-        else:
-            value = 100000
-            finalPath = []
-            for move in opp_moves:
-                newPath = path.copy()
-                newPath.append(move)
-
-                child = board.clone()
-                child.do_jump(move[0][0], move[0][1], move[1][0], move[1][1])
-
-                value, finalPath = min([value, minimax(child, depth + 1, alpha, beta, newPath)])
-
-                beta = min([beta, value])
-                if alpha >= beta:
-                    break
-            return value, finalPath
+    def minimax(self, board):
+        moves = self.agent_move_list(board)
+        return moves
 
     def get_move(self, board):
-        score, move_path = minimax(board, 0, -100000, 100000, [])
-        move_tuple = move_path[0]
+
+        move_tuple = ()
+        empty = board.empty_tiles()
+        if len(empty) <= 1:
+            moves = board.possible_moves()
+#            print("AI MOVE: ", moves[0])
+            print(" ")
+            move_tuple = moves[0]
+        else:
+            moves = self.minimax(board)
+#            print("AI MOVE: ", moves[0])
+            print(" ")
+            move_tuple = moves[0]
+
+        print(" ")
+
         move: Move = Move(move_tuple[0][0], move_tuple[0][1],
                           move_tuple[1][0], move_tuple[1][1])
         return move

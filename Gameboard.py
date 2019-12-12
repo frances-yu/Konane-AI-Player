@@ -165,6 +165,24 @@ class Gameboard:
         moves = []
 
         empty_tiles = self.empty_tiles()
+
+        if len(empty_tiles) == 0:
+            for i in self.corners:
+                move = (i, i)
+                moves.append(move)
+            for i in self.center:
+                move = (i ,i)
+                moves.append(move)
+            return moves
+        elif len(empty_tiles) == 1:
+            r, c = empty_tiles[0][0], empty_tiles[0][1]
+            m = [(r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)]
+            for i in range(0, len(m)):
+                if self.is_in_bounds(m[i][0], m[i][1]):
+                    move = (m[i], m[i])
+                    moves.append(move)
+            return moves
+
         for tile in empty_tiles:
             player = 0
             r2 = tile[0]
@@ -178,7 +196,7 @@ class Gameboard:
                 r1 = s[0]
                 c1 = s[1]
                 if self.is_valid_jump(r1, c1, r2, c2, player):
-                    move = [s, tile]
+                    move = (s, tile)
                     moves.append(move)
 
         return moves
