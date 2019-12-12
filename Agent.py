@@ -121,10 +121,7 @@ class Agent(Player):
         agent_PieceWeight = self.weights[1]
         opp_PieceWeight = -1 * self.weights[1]
 
-        score = (agent_MoveCount * agent_MoveWeight) +
-                (opp_MoveCount * opp_MoveWeight) +
-                (agent_PieceScore * agent_PieceWeight) +
-                (opp_PieceScore * opp_PieceWeight)
+        score = (agent_MoveCount * agent_MoveWeight) + (opp_MoveCount * opp_MoveWeight) + (agent_PieceScore * agent_PieceWeight) + (opp_PieceScore * opp_PieceWeight)
 
         return score
 

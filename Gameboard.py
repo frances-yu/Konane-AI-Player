@@ -98,6 +98,7 @@ class Gameboard:
 
     # Snipers are the validly existing pieces that can potentially jump into (r, c)
     # this function returns a list of tuples (r, c) of potential snipers
+    # i did a ton of math to figure this out :((
     def snipers(self, r, c):
         pieces = []
 
@@ -154,6 +155,12 @@ class Gameboard:
                     empty.append(empty_tile)
         return empty
 
+    # generates list of the empty tiles
+    # generates list of all potential pieces that could jump into the tile
+    # determines which of those pieces actually exist and can actually jump into the empty tiles
+    # those pieces that meet those conditions are moves
+    # pieces (r1, c1), empty tile (r2, c2)
+    # RETURNS: [(r1, c1), (r2, c2)]
     def possible_moves(self):
         moves = []
 
@@ -176,6 +183,8 @@ class Gameboard:
 
         return moves
 
+    # create a new Gameboard of the same size
+    # set its board to be the same as the current Gameboard
     def clone(self):
         copy = Gameboard(self.board_size)
         copy.board = self.board

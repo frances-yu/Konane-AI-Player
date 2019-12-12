@@ -4,6 +4,7 @@
 # ============= Imports ============= #
 from Game import Game
 from Human import Human
+from Agent import Agent
 
 # ============ Constants ============ #
 board_size = 8
