@@ -41,7 +41,7 @@ class Gameboard:
         if not self.is_in_bounds(r, c): return False
         if player == 1 and (r + c) % 2 == 0:
             return True
-        if player == 2 and (r + c % 2 == 1):
+        if player == 2 and (r + c) % 2 == 1:
             return True
         return False
 
@@ -54,13 +54,15 @@ class Gameboard:
         if c1 == c2:
             for r in range(min(r1, r2) + 1, max(r1, r2), 2):  # Opponent's spaces must be filled
                 if not self.is_filled(r, c1): return False
-            for r in range(min(r1, r2) + 2, max(r1, r2) + 1, 2):  # Players's spaces must be empty
+            for r in range(min(r1, r2) + 2, max(r1, r2), 2):  # Players's spaces must be empty
                 if self.is_filled(r, c1): return False
+            if self.is_filled(r2, c2): return False  # Destination must be empty
         if r1 == r2:
-            for c in range(min(c1, c2) + 1, min(c1, c2), 2):  # Opponent's spaces must be filled
+            for c in range(min(c1, c2) + 1, max(c1, c2), 2):  # Opponent's spaces must be filled
                 if not self.is_filled(r1, c): return False
-            for c in range(min(c1, c2) + 2, min(c1, c2) + 1, 2):  # Players's spaces must be empty
+            for c in range(min(c1, c2) + 2, max(c1, c2), 2):  # Players's spaces must be empty
                 if self.is_filled(r1, c): return False
+            if self.is_filled(r2, c2): return False  # Destination must be empty
         return True
 
     def print_board(self, move_count):
