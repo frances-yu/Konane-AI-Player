@@ -10,6 +10,6 @@ board_size = 4
 
 # ============= Main ============= #
 if __name__ == '__main__':
-    human1 = Human('White')
-    human2 = Human('Black')
+    human1 = Human('White', True)
+    human2 = Human('Black', False)
     game = Game(human1, human2, board_size)

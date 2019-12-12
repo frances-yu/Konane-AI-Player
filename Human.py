@@ -5,8 +5,8 @@ from Player import Player
 
 
 class Human(Player):
-    def __init__(self, name):
-        super().__init__(name)
+    def __init__(self, name, is_top_left):
+        super().__init__(name, is_top_left)
 
     def get_move(self, board):
         # Input move with format ((r1,c1),(r2,c2)) where r1,c1,r2,c2 are 0-indexed positions starting from top left
