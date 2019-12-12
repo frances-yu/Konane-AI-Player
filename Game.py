@@ -32,9 +32,8 @@ class Game:
 
     # Main loop
     def playing_loop(self):
-        done = False
         player_turn = 1  # player who's turn it is
-        while not done:
+        while not self.is_game_over():
             self.board.print_board(self.move_count)  # Show board
 
             # Query for player's move, verify the move is valid, then do the move
@@ -42,18 +41,15 @@ class Game:
             move = None
             while not valid_move:
                 if player_turn == 1:
-                    move = self.player1.get_move()
+                    move = self.player1.get_move(self.board)
                 else:
-                    move = self.player2.get_move()
+                    move = self.player2.get_move(self.board)
                 valid_move = self.is_valid_move(move, player_turn)
                 if not valid_move:
                     print("Not a valid move")
             self.do_move(move)
             self.previous_move = move
             self.move_count += 1
-
-            # Check if the game is over
-            done = self.is_game_over()
 
             # Switch turns
             if player_turn == 1:
@@ -80,7 +76,7 @@ class Game:
 
     def is_game_over(self):
         # Checks if there are no moves left
-        # TODO return len(self.possible_moves()) == 0
+        # TODO return len(self.board.possible_moves()) == 0
         return False
 
     def do_move(self, move):
@@ -90,7 +86,4 @@ class Game:
 
         # Other moves need to be a jump
         else:
-            self.board.do_jump(move.r1,move.c1,move.r2,move.c2)
-
-    def possible_moves(self):
-        return
+            self.board.do_jump(move.r1, move.c1, move.r2, move.c2)

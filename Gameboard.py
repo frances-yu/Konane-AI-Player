@@ -50,16 +50,16 @@ class Gameboard:
         if not (self.is_players_space(r1, c1, player) and self.is_players_space(r2, c2, player)): return False
         # stay in row/col, and have proper pieces inbetween
         if not self.is_filled(r1, c1): return False  # Piece must exist
-        if not ((r1 == r2) ^ (c1 == c2)): return False  # Must stay in a line
+        if not ((r1 == r2) ^ (c1 == c2)): return False  # Must stay in a line and can't be same piece
         if c1 == c2:
-            for r in range(r1 + 1, r2, 2 * int((r2 - r1) / abs(r2 - r1))):  # Opponent's spaces must be filled
+            for r in range(min(r1, r2) + 1, max(r1, r2), 2):  # Opponent's spaces must be filled
                 if not self.is_filled(r, c1): return False
-            for r in range(r1 + 2, r2 + 1, 2 * int((r2 - r1) / abs(r2 - r1))):  # Players's spaces must be empty
+            for r in range(min(r1, r2) + 2, max(r1, r2) + 1, 2):  # Players's spaces must be empty
                 if self.is_filled(r, c1): return False
         if r1 == r2:
-            for c in range(c1 + 1, c2, 2 * int((c2 - c1) / abs(c2 - c1))):  # Opponent's spaces must be filled
+            for c in range(min(c1, c2) + 1, min(c1, c2), 2):  # Opponent's spaces must be filled
                 if not self.is_filled(r1, c): return False
-            for c in range(c1 + 2, c2 + 1, 2 * int((c2 - c1) / abs(c2 - c1))):  # Players's spaces must be empty
+            for c in range(min(c1, c2) + 2, min(c1, c2) + 1, 2):  # Players's spaces must be empty
                 if self.is_filled(r1, c): return False
         return True
 
@@ -79,6 +79,7 @@ class Gameboard:
 
     def is_filled(self, r, c):
         # Returns True if space is occupied, otherwise returns False
+        if not self.is_in_bounds(r, c): return False
         return self.board[r][c]
 
     def set_piece(self, r, c, val):
@@ -93,7 +94,10 @@ class Gameboard:
                 self.set_piece(r, c1, False)
         self.set_piece(r2, c2, True)
 
-        # # empty = 0, black = 1, white = 2
+    def possible_moves(self):
+        return
+
+#   empty = 0, black = 1, white = 2
 #         self.letter_number = {'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7,
 #         'i':8,'j':9,'k':10,'l':11,'m':12,'n':13,'o':14,'p':15,'q':16,'r':17}
 #

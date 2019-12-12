@@ -8,7 +8,7 @@ class Human(Player):
     def __init__(self, name):
         super().__init__(name)
 
-    def get_move(self):
+    def get_move(self, board):
         # Input move with format ((r1,c1),(r2,c2)) where r1,c1,r2,c2 are 0-indexed positions starting from top left
         # For first two moves, move formatted as (r1,c1)
         # For example, ((1,2),(1,4)) will move a piece at row 1, col 2 to a space at row 1, col 4
