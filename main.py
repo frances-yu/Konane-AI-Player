@@ -68,6 +68,8 @@ def telnet():
 if __name__ == '__main__':
     tn, c, gf, fm = telnet()
 
+    # Change Human to Agent
+
     if gf:
         agent1 = Human(c, False)
         remoteplayer2 = RemotePlayer("BLACK", True, tn)
