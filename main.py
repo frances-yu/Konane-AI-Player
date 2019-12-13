@@ -14,9 +14,9 @@ import telnetlib
 board_size = 18
 tn_ip = "artemis.engr.uconn.edu"
 tn_port = "4705"
-tn_username = b"1111"
-tn_password = b"1111"
-tn_opponent = b"2222"
+tn_username = b"3333"
+tn_password = b"3333"
+tn_opponent = b"4444"
 waitfor = b"Game:"
 
 # ============ Functions ============ #
@@ -39,7 +39,7 @@ def telnet():
     games = tn.read_until(b"\n").decode('ASCII')[:-1]
     #print(games)
     r1 = tn.read_until(b"\n").decode('ASCII')[:-1]
-    #print(r1)
+    print(r1)
     #Color:????? or Player:1
 
     if r1 == "Player:1":
@@ -52,10 +52,10 @@ def telnet():
         #print(color)
         #WHITE or BLACK
         r2 = tn.read_until(b"\n").decode('ASCII')[:-1]
-        #print(r2)
+        print(r2)
         #Player 2
         r3 = tn.read_until(b"\n").decode('ASCII')[:-1]
-        #print(r3)
+        print(r3)
         #Removed:[?:?]
         # first_move = r3[8:]
         # print(first_move)
