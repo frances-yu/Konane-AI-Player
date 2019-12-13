@@ -13,6 +13,12 @@ class Move:
         self.r2 = r2
         self.c2 = c2
 
+    def __str__(self):
+        return "((" + str(self.r1) + "," + str(self.c1) + "),(" + str(self.r2) + "," + str(self.c2) + "))"
+
+    def __repr__(self):
+        return str(self)
+
 
 class Game:
     def __init__(self, player1, player2, board_size=18):

@@ -39,9 +39,9 @@ class Gameboard:
 
     def is_players_space(self, r, c, color):
         if not self.is_in_bounds(r, c): return False
-        if color == 'White' and (r + c) % 2 != 0:
+        if color == 'WHITE' and (r + c) % 2 != 0:
             return True
-        if color == 'Black' and (r + c) % 2 == 0:
+        if color == 'BLACK' and (r + c) % 2 == 0:
             return True
         return False
 

@@ -14,9 +14,9 @@ import telnetlib
 board_size = 18
 tn_ip = "artemis.engr.uconn.edu"
 tn_port = "4705"
-tn_username = b"3333"
-tn_password = b"3333"
-tn_opponent = b"4444"
+tn_username = b"1010"
+tn_password = b"1010"
+tn_opponent = b"0101"
 waitfor = b"Game:"
 
 # ============ Functions ============ #
@@ -96,6 +96,6 @@ if __name__ == '__main__':
     #     else:
     #         agent2 = Agent("WHITE", False)
 
-    # human1 = Human('White', True)
-    # human2 = Human('Black', False)
+    # human1 = Human('WHITE', True)
+    # human2 = Human('BLACK', False)
     # game = Game(human1, human2, board_size)
