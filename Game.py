@@ -3,6 +3,7 @@
 
 
 from Gameboard import Gameboard
+import time
 
 
 class Move:
@@ -27,16 +28,20 @@ class Game:
         self.move_count = 0
         self.previous_move: Move = Move(-1, -1, -1, -1)
 
+        self.final_move: Move = Move(-1, -1, -1, -1)
+
         # Start
         self.playing_loop()
 
     # Main loop
     def playing_loop(self):
         player_turn = 1  # player who's turn it is
+        total_time = time.time()
         while not self.is_game_over():
             self.board.print_board(self.move_count)  # Show board
 
             # Query for player's move, verify the move is valid, then do the move
+            start = time.time()
             valid_move = False
             move = None
             while not valid_move:
@@ -50,12 +55,21 @@ class Game:
             self.do_move(move)
             self.previous_move = move
             self.move_count += 1
-
+            print(self.move_count)
+            end = time.time() - start
+            print(end)
             # Switch turns
             if player_turn == 1:
                 player_turn = 2
             else:
                 player_turn = 1
+
+        self.do_move(self.final_move)
+        self.board.print_board(self.move_count)
+        print("GAME OVER")
+        print(time.time() - total_time)
+        print("WINNER: PLAYER " + str(player_turn))
+        print(self.board.possible_moves())
 
     def is_valid_move(self, move: Move, player):
         # Checks if move is valid based on number of moves taken so far
@@ -76,7 +90,17 @@ class Game:
 
     def is_game_over(self):
         # Checks if there are no moves left
-        return len(self.board.possible_moves()) == 0
+        possible_moves = self.board.possible_moves()
+        print(possible_moves)
+        even, odd = 0, 0
+        for m in possible_moves:
+            if (m[0][0] + m[0][1]) % 2 == 0: even += 1
+            else: odd += 1
+        if (even == 0 or odd == 0) and self.move_count > 1:
+            m = possible_moves[0]
+            self.final_move = Move(m[0][0], m[0][1], m[1][0], m[1][1])
+            return True
+        return False
 
     def do_move(self, move):
         # First two moves remove

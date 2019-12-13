@@ -12,4 +12,4 @@ if __name__ == '__main__':
     agent2 = Agent('Black', False)
     human1 = Human('White', True)
     human2 = Human('Black', False)
-    game = Game(agent1, human2, 8)
+    game = Game(agent1, agent2, 8)

@@ -5,8 +5,8 @@ from Player import Player
 
 
 class RemotePlayer(Player):
-    def __init__(self, name, is_top_left):
-        super().__init__(name, is_top_left)
+    def __init__(self, name, is_bottom_left):
+        super().__init__(name, is_bottom_left)
         # TODO setup more object variables
 
     def get_move(self, board):

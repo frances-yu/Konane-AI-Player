@@ -6,22 +6,24 @@ from Player import Player
 
 class Agent(Player):
 
-    def __init__(self, name, is_top_left):
-        super().__init__(name, is_top_left)
+    def __init__(self, name, is_bottom_left):
+        super().__init__(name, is_bottom_left)
         self.name = name
 
-        self.agent = is_top_left
-        self.opp = not is_top_left
+        self.agent = is_bottom_left
+        self.opp = not is_bottom_left
 
         # list of feature weigths
         #   0 = weighting for a player's number of moves
-        #   1 = weighting for a player's number of pieces
+        #   1 = weighting for a player's ordinary pieces
+        #   2 = weighting for a player's side pieces
+        #   3 = weighting for a player's corner pieces
         # positive weight for agent
         # negative weight for opponent
-        self.weights = [1, 1]
+        self.weights = [1, 1, 1, 1]
 
     # counts total number of pieces available to a player
-    def pieceCount(self, board, is_player_one):
+    def pieceCount(self, board, is_bottom_left):
         size = board.board_size
         count = 0
         for row in range(0, size):
@@ -31,7 +33,7 @@ class Agent(Player):
 
             # Player 1: Non-even rows start at index 1
             # Player 2: Even rows start at index 1
-            if (is_player_one and row % 2 != 0) or (not is_player_one and row % 2 == 0):
+            if (is_bottom_left and row % 2 != 0) or (not is_bottom_left and row % 2 == 0):
                 start = 1
 
             # step size = 2 because player's piece exists every other tile
@@ -45,13 +47,13 @@ class Agent(Player):
         return self.pieceCount(board, self.opp)
 
     # determines list of possible moves for a player
-    def moveList(self, board, is_player_one):
+    def moveList(self, board, is_bottom_left):
         all_moves = board.possible_moves()
         moves = []
         for m in all_moves:
             piece = m[0]
             r, c = piece[0], piece[1]
-            if is_player_one:
+            if is_bottom_left:
                 if (r + c) % 2 == 0: moves.append(m)
             else:
                 if (r + c) % 2 != 0: moves.append(m)
@@ -62,12 +64,12 @@ class Agent(Player):
         return self.moveList(board, self.opp)
 
     # counts number of corner pieces belonging to a player
-    def cornerPieces(self, board, is_player_one):
+    def cornerPieces(self, board, is_bottom_left):
         all_corners = board.corners
         corner = 0
         for p in all_corners:
             r, c = p[0], p[1]
-            if is_player_one:
+            if is_bottom_left:
                 if (r+c) % 2 == 0 and board.is_filled(r, c): corner += 1
             else:
                 if (r+c) % 2 != 0 and board.is_filled(r, c): corner += 1
@@ -78,7 +80,7 @@ class Agent(Player):
         return self.cornerPieces(board, self.opp)
 
     # counts number of side pieces belonging to a player
-    def sidePieces(self, board, is_player_one):
+    def sidePieces(self, board, is_bottom_left):
         size = board.board_size
         count = 0
         for i in range(1, size - 1):
@@ -89,7 +91,7 @@ class Agent(Player):
             candidates = [top, bottom, right, left]
             for p in candidates:
                 r, c = p[0], p[1]
-                if is_player_one:
+                if is_bottom_left:
                     if (r + c) % 2 == 0 and board.is_filled(r, c): count += 1
                 else:
                     if (r + c) % 2 != 0 and board.is_filled(r, c): count += 1
@@ -98,10 +100,6 @@ class Agent(Player):
         return self.sidePieces(board, self.agent)
     def opp_side_count(self, board):
         return self.sidePieces(board, self.opp)
-
-    # determines score of a piece - NOT BEING USED
-    def scorePiece(self, row, col):
-        return
 
     # determines score of a gameboard
     # takes into consideration # of moves and # of pieces for both players
@@ -119,36 +117,49 @@ class Agent(Player):
         if agent_MoveCount == 0 and opp_MoveCount > 0:
             return -100000
 
-        agent_PieceScore = self.agent_piece_count(board) + self.agent_side_count(board) + 2*self.agent_corner_count(board)
+        agent_piece = self.agent_piece_count(board)
+        opp_piece = self.opp_piece_count(board)
 
-        opp_PieceScore = self.opp_piece_count(board) + self.opp_side_count(board) + 2 * self.opp_corner_count(board)
+        agent_side = self.agent_side_count(board)
+        opp_side = self.opp_side_count(board)
+
+        agent_corner = self.agent_corner_count(board)
+        opp_corner = self.opp_corner_count(board)
 
         agent_MoveWeight = self.weights[0]
         opp_MoveWeight = -1 * self.weights[0]
+
         agent_PieceWeight = self.weights[1]
         opp_PieceWeight = -1 * self.weights[1]
 
-        score = (agent_MoveCount * agent_MoveWeight) + (opp_MoveCount * opp_MoveWeight) + (agent_PieceScore * agent_PieceWeight) + (opp_PieceScore * opp_PieceWeight)
+        agent_SideWeight = self.weights[2]
+        opp_SideWeight = -1 * self.weights[2]
+
+        agent_CornerWeight = self.weights[3]
+        opp_CornerWeight = -1 * self.weights[3]
+
+        score = (agent_MoveCount * agent_MoveWeight) + (opp_MoveCount * opp_MoveWeight) + (agent_piece * agent_PieceWeight) + (opp_piece * opp_PieceWeight) + (agent_side * agent_SideWeight) + (opp_side * opp_SideWeight) + (agent_corner * agent_CornerWeight) + (opp_corner * opp_CornerWeight)
 
         return score
 
-    # lookahead 3 moves
+    def is_terminal_state(self, board, agent_moveList, opp_moveList):
+        return len(agent_moveList) == 0 or len(opp_moveList) == 0
+
+    # lookahead 2 moves
     # alpha-beta pruning hopefully
     # if depth = 0, agent's turn, find max
     # if depth = 1, opp's turn, find min
-    # if depth = 2, agent's turn, find max
-    # if depth = 3, return score
+    # if depth = 2, return score
     def minimax(self, board, depth, alpha, beta):
         agent_moves = self.agent_move_list(board)
         opp_moves = self.opp_move_list(board)
 
-
-        if depth == 3:
+        if depth == 2 or self.is_terminal_state(board, agent_moves, opp_moves):
             return self.gamescore(board, agent_moves, opp_moves), None
 
         best_value = None
         best_move = ((-1, -1), (-1, -1))
-        if depth == 0 or depth == 2:
+        if depth == 0:
             best_value = float('-inf')
             for m in agent_moves:
                 new_state = board.clone()
@@ -160,8 +171,7 @@ class Agent(Player):
                     best_move = m
                     alpha = max([alpha, best_value])
                     if beta <= alpha:
-                        break
-
+                        return best_value, best_move
         elif depth == 1:
             best_value = float('inf')
             for m in opp_moves:
@@ -174,27 +184,20 @@ class Agent(Player):
                     best_move = m
                     beta = min([beta, best_value])
                     if beta <= alpha:
-                        break
-        print("DEPTH : " + str(depth))
-        print("BEST MOVE: ", best_move)
-        print(" ")
+                        return best_value, best_move
         return best_value, best_move
 
     def get_move(self, board):
 
         empty = board.empty_tiles()
         if len(empty) <= 1:
-            moves = board.possible_moves()
-            chosen_move = moves[0]
+            moves = self.agent_move_list(board)
+            m = moves[0]
         else:
-            score, best_move = self.minimax(board, 0, float('-inf'), float('inf'))
-            print(best_move)
-            print(best_move[0])
-            print(best_move[1])
-            chosen_move = best_move
+            score, m = self.minimax(board, 0, float('-inf'), float('inf'))
+
+        print(m)
         print(" ")
 
-        move: Move = Move(chosen_move[0][0], chosen_move[0][1],
-                          chosen_move[1][0], chosen_move[1][1])
-
+        move: Move = Move(m[0][0], m[0][1], m[1][0], m[1][1])
         return move
