@@ -14,5 +14,5 @@ class Player(ABC):
         return self.name
 
     @abstractmethod
-    def get_move(self, board: Gameboard):
+    def get_move(self, board: Gameboard, prev_move):
         pass

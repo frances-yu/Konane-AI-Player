@@ -187,7 +187,7 @@ class Agent(Player):
                         return best_value, best_move
         return best_value, best_move
 
-    def get_move(self, board):
+    def get_move(self, board, prev_move):
 
         empty = board.empty_tiles()
         if len(empty) <= 1:
