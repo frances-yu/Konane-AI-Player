@@ -10,8 +10,8 @@ class Agent(Player):
         super().__init__(name, is_bottom_left)
         self.name = name
 
-        self.agent = is_bottom_left
-        self.opp = not is_bottom_left
+        self.agent = not is_bottom_left
+        self.opp = is_bottom_left
 
         # list of feature weigths
         #   0 = weighting for a player's number of moves
