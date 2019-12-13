@@ -154,8 +154,11 @@ class Agent(Player):
         agent_moves = self.agent_move_list(board)
         opp_moves = self.opp_move_list(board)
 
-        if depth == 2 or self.is_terminal_state(board, agent_moves, opp_moves):
+        if depth == 2:
             return self.gamescore(board, agent_moves, opp_moves), None
+
+#        if depth == 2 or self.is_terminal_state(board, agent_moves, opp_moves):
+#            return self.gamescore(board, agent_moves, opp_moves), None
 
         best_value = None
         best_move = ((-1, -1), (-1, -1))
@@ -188,16 +191,11 @@ class Agent(Player):
         return best_value, best_move
 
     def get_move(self, board, prev_move):
-
         empty = board.empty_tiles()
         if len(empty) <= 1:
             moves = self.agent_move_list(board)
             m = moves[0]
         else:
             score, m = self.minimax(board, 0, float('-inf'), float('inf'))
-
-        print(m)
-        print(" ")
-
         move: Move = Move(m[0][0], m[0][1], m[1][0], m[1][1])
         return move

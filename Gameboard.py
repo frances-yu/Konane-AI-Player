@@ -189,7 +189,6 @@ class Gameboard:
             m = [(r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)]
             for i in range(0, len(m)):
                 if self.is_in_bounds(m[i][0], m[i][1]):
-                    move = (m[i], m[i])
                     moves.append((m[i], m[i]))
             return moves
         elif len(empty_tiles) >= 2:
@@ -197,6 +196,59 @@ class Gameboard:
                 candidates = self.snipers(tile)
                 for c in candidates:
                     moves.append((c, tile))
+        return moves
+
+    def even_moves(self):
+        moves = []
+        empty_tiles = self.empty_tiles()
+        if len(empty_tiles) == 0:
+            for i in self.corners:
+                if (i[0] + i[1]) % 2 == 0:
+                    moves.append((i, i))
+            for i in self.center:
+                if (i[0] + i[1] % 2 == 0):
+                    moves.append((i, i))
+            return moves
+        elif len(empty_tiles) == 1:
+            r, c = empty_tiles[0][0], empty_tiles[0][1]
+            m = [(r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)]
+            for i in range(0, len(m)):
+                if self.is_in_bounds(m[i][0], m[i][1]):
+                    if (m[i][0] + m[i][1]) % 2 == 0:
+                        moves.append((m[i], m[i]))
+            return moves
+        elif len(empty_tiles) >= 2:
+            for tile in empty_tiles:
+                candidates = self.snipers(tile)
+                for c in candidates:
+                    if (c[0] + c[1]) % 2 == 0:
+                        moves.append((c, tile))
+        return moves
+    def odd_moves(self):
+        moves = []
+        empty_tiles = self.empty_tiles()
+        if len(empty_tiles) == 0:
+            for i in self.corners:
+                if (i[0] + i[1]) % 2 != 0:
+                    moves.append((i, i))
+            for i in self.center:
+                if (i[0] + i[1] % 2 != 0):
+                    moves.append((i, i))
+            return moves
+        elif len(empty_tiles) == 1:
+            r, c = empty_tiles[0][0], empty_tiles[0][1]
+            m = [(r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)]
+            for i in range(0, len(m)):
+                if self.is_in_bounds(m[i][0], m[i][1]):
+                    if (m[i][0] + m[i][1]) % 2 != 0:
+                        moves.append((m[i], m[i]))
+            return moves
+        elif len(empty_tiles) >= 2:
+            for tile in empty_tiles:
+                candidates = self.snipers(tile)
+                for c in candidates:
+                    if (c[0] + c[1]) % 2 != 0:
+                        moves.append((c, tile))
         return moves
 
     # create a new Gameboard of the same size
