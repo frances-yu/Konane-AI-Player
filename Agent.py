@@ -4,7 +4,6 @@ from Game import Move
 from Gameboard import Gameboard
 from Player import Player
 
-
 class Agent(Player):
 
     def __init__(self, name, is_top_left):
@@ -112,6 +111,14 @@ class Agent(Player):
         agent_MoveCount = len(agent_moveList)
         opp_MoveCount = len(opp_moveList)
 
+        # if agent has moves to make and opp doesn't, return very high score
+        if agent_MoveCount > 0 and opp_MoveCount == 0:
+            return 100000
+
+        # if agent has no moves to make and opp does, return very low score
+        if agent_MoveCount == 0 and opp_MoveCount > 0:
+            return -100000
+
         agent_PieceScore = self.agent_piece_count(board) + self.agent_side_count(board) + 2*self.agent_corner_count(board)
 
         opp_PieceScore = self.opp_piece_count(board) + self.opp_side_count(board) + 2 * self.opp_corner_count(board)
@@ -131,27 +138,66 @@ class Agent(Player):
     # if depth = 1, opp's turn, find min
     # if depth = 2, agent's turn, find max
     # if depth = 3, return score
-    def minimax(self, board):
-        moves = self.agent_move_list(board)
-        return moves
+    def minimax(self, board, depth, alpha, beta):
+        agent_moves = self.agent_move_list(board)
+        opp_moves = self.opp_move_list(board)
+
+
+        if depth == 3:
+            return self.gamescore(board, agent_moves, opp_moves), None
+
+        best_value = None
+        best_move = ((-1, -1), (-1, -1))
+        if depth == 0 or depth == 2:
+            best_value = float('-inf')
+            for m in agent_moves:
+                new_state = board.clone()
+                new_state.do_jump(m[0][0], m[0][1], m[1][0], m[1][1])
+                child_score, child_move = self.minimax(new_state, depth+1, alpha, beta)
+
+                if best_value < child_score:
+                    best_value = child_score
+                    best_move = m
+                    alpha = max([alpha, best_value])
+                    if beta <= alpha:
+                        break
+
+        elif depth == 1:
+            best_value = float('inf')
+            for m in opp_moves:
+                new_state = board.clone()
+                new_state.do_jump(m[0][0], m[0][1], m[1][0], m[1][1])
+                child_score, child_move = self.minimax(new_state, depth+1, alpha, beta)
+
+                if best_value > child_score:
+                    best_value = child_score
+                    best_move = m
+                    beta = min([beta, best_value])
+                    if beta <= alpha:
+                        break
+        print("DEPTH : " + str(depth))
+        print("BEST MOVE: ", best_move)
+        print(" ")
+        return best_value, best_move
 
     def get_move(self, board):
 
-        move_tuple = ()
+        move: Move = Move(-1,-1,-1,-1)
         empty = board.empty_tiles()
         if len(empty) <= 1:
             moves = board.possible_moves()
-#            print("AI MOVE: ", moves[0])
-            print(" ")
-            move_tuple = moves[0]
+            move.r1 = moves[0][0][0]
+            move.c1 = moves[0][0][1]
+            move.r2 = moves[0][1][0]
+            move.c2 = moves[0][1][1]
         else:
-            moves = self.minimax(board)
-#            print("AI MOVE: ", moves[0])
-            print(" ")
-            move_tuple = moves[0]
+            score, best_move = self.minimax(board, 0, float('-inf'), float('inf'))
+            print(best_move)
+
+            move.r1 = best_move[0][0]
+            move.c1 = best_move[0][1]
+            move.r2 = best_move[1][0]
+            move.c2 = best_move[1][1]
 
         print(" ")
-
-        move: Move = Move(move_tuple[0][0], move_tuple[0][1],
-                          move_tuple[1][0], move_tuple[1][1])
         return move
