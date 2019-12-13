@@ -38,10 +38,9 @@ def telnet():
 
     games = tn.read_until(b"\n").decode('ASCII')[:-1]
     #print(games)
-    #1
     r1 = tn.read_until(b"\n").decode('ASCII')[:-1]
     #print(r1)
-    #Color:?????
+    #Color:????? or Player:1
 
     if r1 == "Player:1":
         goes_first = True
@@ -50,25 +49,23 @@ def telnet():
     else:
         goes_first = False
         color = r1[6:]
-        print(color)
+        #print(color)
         #WHITE or BLACK
         r2 = tn.read_until(b"\n").decode('ASCII')[:-1]
-        print(r2)
+        #print(r2)
         #Player 2
         r3 = tn.read_until(b"\n").decode('ASCII')[:-1]
-        print(r3)
+        #print(r3)
         #Removed:[?:?]
-        first_move = r3[8:]
-        print(first_move)
+        # first_move = r3[8:]
+        # print(first_move)
         #[?:?]
 
-    return tn, color, goes_first, first_move
+    return tn, color, goes_first
 
 # ============= Main ============= #
 if __name__ == '__main__':
-    tn, c, gf, fm = telnet()
-
-    # Change Human to Agent
+    tn, c, gf = telnet()
 
     if gf:
         agent1 = Agent(c, False)
