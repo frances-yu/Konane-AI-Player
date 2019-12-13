@@ -10,8 +10,8 @@ class Agent(Player):
         super().__init__(name, is_bottom_left)
         self.name = name
 
-        self.agent = not is_bottom_left
-        self.opp = is_bottom_left
+        self.agent = is_bottom_left
+        self.opp = not is_bottom_left
 
         # list of feature weigths
         #   0 = weighting for a player's number of moves
@@ -194,6 +194,5 @@ class Agent(Player):
             m = moves[0]
         else:
             score, m = self.minimax(board, 0, float('-inf'), float('inf'))
-        print(m)
         move: Move = Move(m[0][0], m[0][1], m[1][0], m[1][1])
         return move

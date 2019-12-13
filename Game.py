@@ -41,23 +41,21 @@ class Game:
         total_time = time.time()
         while not self.is_game_over(player_turn):
 
-            color = ''
-            if player_turn == 1: color = self.player1.name
-            else: color = self.player2.name
-            print("PLAYER " + str(player_turn) + ': ' + color)
-
             self.board.print_board(self.move_count)  # Show board
 
             # Query for player's move, verify the move is valid, then do the move
             start = time.time()
             valid_move = False
             move = None
+            color = ''
             while not valid_move:
                 if player_turn == 1:
+                    color = self.player1.name
                     move = self.player1.get_move(self.board, self.previous_move)
                 else:
+                    color = self.player2.name
                     move = self.player2.get_move(self.board, self.previous_move)
-                valid_move = self.is_valid_move(move, player_turn)
+                valid_move = self.is_valid_move(move, color)
                 if not valid_move:
                     done = move.r1 == -1 and move.c1 == -1 and move.r2 == -1 and move.c2 == -1
                     if done:
@@ -69,6 +67,7 @@ class Game:
             self.move_count += 1
             end = time.time() - start
             print(end)
+            print("PLAYER " + str(player_turn) + ': ' + color)
 
             # Switch turns
             if player_turn == 1:
@@ -76,32 +75,35 @@ class Game:
             else:
                 player_turn = 1
 
+        if player_turn == 1:
+            self.winner = self.player2
+            self.loser = self.player1
+            player_turn = 2
+        else:
+            self.winner = self.player1
+            self.loser = self.player2
+            player_turn = 1
+
         print("GAME OVER")
         print(time.time() - total_time)
         print("WINNER: PLAYER " + str(player_turn))
+        self.board.print_board(self.move_count)
 
-        if player_turn == 1:
-            self.winner = self.player1
-            self.loser = self.player2
-        else:
-            self.winner = self.player2
-            self.loser = self.player1
-
-    def is_valid_move(self, move: Move, player):
+    def is_valid_move(self, move: Move, color):
         # Checks if move is valid based on number of moves taken so far
 
         # First move valid if from center or corner
         if self.move_count == 0:
-            if not self.board.is_valid_first(move.r1, move.c1, player): return False
+            if not self.board.is_valid_first(move.r1, move.c1, color): return False
 
         # Second move valid if next to previous move
         elif self.move_count == 1:
-            if not self.board.is_valid_second(move.r1, move.c1, self.previous_move.r1, self.previous_move.c1, player):
+            if not self.board.is_valid_second(move.r1, move.c1, self.previous_move.r1, self.previous_move.c1, color):
                 return False
 
         # Other moves need to be a jump
         else:
-            if not self.board.is_valid_jump(move.r1, move.c1, move.r2, move.c2, player): return False
+            if not self.board.is_valid_jump(move.r1, move.c1, move.r2, move.c2, color): return False
         return True
 
     def is_game_over(self, turn):

@@ -21,15 +21,15 @@ class Gameboard:
                        (int(self.board_size / 2), int(self.board_size / 2 - 1)),
                        (int(self.board_size / 2 - 1), int(self.board_size / 2 - 1))}
 
-    def is_valid_first(self, r, c, player):
+    def is_valid_first(self, r, c, color):
         # First move valid if piece taken from center or corner
-        if not self.is_players_space(r, c, player): return False
+        if not self.is_players_space(r, c, color): return False
         if not self.is_filled(r, c): return False
         return ((r, c) in self.center) or ((r, c) in self.corners)
 
-    def is_valid_second(self, r, c, previous_r, previous_c, player):
+    def is_valid_second(self, r, c, previous_r, previous_c, color):
         # Second move valid if piece taken near other one
-        if not self.is_players_space(r, c, player): return False
+        if not self.is_players_space(r, c, color): return False
         if not self.is_filled(r, c): return False
         return (abs(r - previous_r) == 1 and abs(c - previous_c) == 0) or (
                 abs(r - previous_r) == 0 and abs(c - previous_c) == 1)
@@ -37,17 +37,17 @@ class Gameboard:
     def is_in_bounds(self, r, c):
         return (0 <= r < self.board_size) and (0 <= c < self.board_size)
 
-    def is_players_space(self, r, c, player):
+    def is_players_space(self, r, c, color):
         if not self.is_in_bounds(r, c): return False
-        if player == 1 and (r + c) % 2 == 0:
+        if color == 'White' and (r + c) % 2 != 0:
             return True
-        if player == 2 and (r + c) % 2 == 1:
+        if color == 'Black' and (r + c) % 2 == 0:
             return True
         return False
 
-    def is_valid_jump(self, r1, c1, r2, c2, player):
+    def is_valid_jump(self, r1, c1, r2, c2, color):
         # Must stay within player's spaces
-        if not (self.is_players_space(r1, c1, player) and self.is_players_space(r2, c2, player)): return False
+        if not (self.is_players_space(r1, c1, color) and self.is_players_space(r2, c2, color)): return False
         # stay in row/col, and have proper pieces inbetween
         if not self.is_filled(r1, c1): return False  # Piece must exist
         if not ((r1 == r2) ^ (c1 == c2)): return False  # Must stay in a line and can't be same piece
