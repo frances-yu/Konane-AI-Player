@@ -13,9 +13,9 @@ import telnetlib
 board_size = 18
 tn_ip = "artemis.engr.uconn.edu"
 tn_port = "4705"
-tn_username = b"4402"
-tn_password = b"4401"
-tn_opponent = b"2044"
+tn_username = b"1122"
+tn_password = b"1122"
+tn_opponent = b"2211"
 waitfor = b"Game:"
 
 # ============ Functions ============ #
@@ -33,13 +33,38 @@ def telnet():
     tn.read_until(b"?Opponent:")
     tn.write(tn_opponent + b"\r\n")
     tn.read_until(waitfor)
-    r = tn.read_some()
+    print("Game authenticated")
 
+    games = tn.read_until(b"\n").decode('ASCII')[:-1]
+    #print(games)
+    #1
+    r1 = tn.read_until(b"\n").decode('ASCII')[:-1]
+    #print(r1)
+    #Color:?????
+
+    if r1 == "Player:1":
+        goes_first = True
+        color = "NONE"
+    else:
+        goes_first = False
+        color = r1[6:]
+        print(color)
+        r2 = tn.read_until(b"\n").decode('ASCII')[:-1]
+        #print(r2)
+        #Player 2
+        r3 = tn.read_until(b"\n").decode('ASCII')[:-1]
+        #print(r3)
+        #Removed:[?:?]
+        first_move = r3[8:]
+        #print(first_move)
+        #[?:?]
+
+    return color, goes_first
 
 # ============= Main ============= #
 if __name__ == '__main__':
-    color, goes_first = telnet()
+    c, gf = telnet()
 
-    agent1 = Agent('White', True)
-    agent2 = Agent('Black', False)
-    game = Game(agent1, agent2, board_size)
+    # human1 = Human('White', True)
+    # human2 = Human('Black', False)
+    # game = Game(human1, human2, board_size)
