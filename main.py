@@ -14,9 +14,9 @@ import telnetlib
 board_size = 18
 tn_ip = "artemis.engr.uconn.edu"
 tn_port = "4705"
-tn_username = b"1212"
-tn_password = b"1212"
-tn_opponent = b"2121"
+tn_username = b"1111"
+tn_password = b"1111"
+tn_opponent = b"2222"
 waitfor = b"Game:"
 
 # ============ Functions ============ #

@@ -26,23 +26,24 @@ class RemotePlayer(Player):
             # time_left = q[6:]
             # time_left = time_left[:-2]
 
-            if prev_move is None:
+            if prev_move.r1 == -1 and prev_move.c1 == -1 and prev_move.r2 == -1 and prev_move.c2 == -1:
                 #if remote player goes first
                 #receive move from server and return get_move
-                oppo_move = tn.read_until(b"\n").decode('ASCII')[:-1]
+                oppo_move = self.tn.read_until(b"\n").decode('ASCII')[:-1]
                 move_tuple = ((int(oppo_move[11]), int(oppo_move[13])),(int(oppo_move[11]), int(oppo_move[13])))
                 move: Move = Move(move_tuple[0][0], move_tuple[0][1], move_tuple[1][0], move_tuple[1][1])
                 self.remove = True
+                print("in prev move")
             else:
                 #prev_move is in form ((?,?),(?,?))
                 #if agent goes first
                 #send move to server
                 #wait
                 #receive move from server and return get_move
-                m1 = str(prev_move[0][0]).encode('ASCII')
-                m2 = str(prev_move[0][1]).encode('ASCII')
-                m3 = str(prev_move[1][0]).encode('ASCII')
-                m4 = str(prev_move[1][1]).encode('ASCII')
+                m1 = str(prev_move.r1).encode('ASCII')
+                m2 = str(prev_move.c1).encode('ASCII')
+                m3 = str(prev_move.r2).encode('ASCII')
+                m4 = str(prev_move.c2).encode('ASCII')
 
                 if self.remove == True:
                     agent_move = b"[" + m1 + b":" + m2 + b"]"
@@ -50,13 +51,25 @@ class RemotePlayer(Player):
                 else:
                     agent_move = b"[" + m1 + b":" + m2 + b"]:[" + m3 + b"]"
 
-                tn.write(agent_move + b"\r\n")
-                repeat = tn.read_until(b"\n").decode('ASCII')[:-1]
+                print("first hello")
 
-                oppo_move = tn.read_until(b"\n").decode('ASCII')[:-1]
+                print(agent_move.decode('ASCII'))
+                self.tn.write(agent_move + b"\r\n")
+                print("hello")
+
+                repeat = self.tn.read_until(b"\n").decode('ASCII')[:-1]
+                print(repeat)
+
+                print("world")
+
+                oppo_move = self.tn.read_until(b"\n").decode('ASCII')[:-1]
+                print(oppo_move)
+
                 move_tuple = ((int(oppo_move[5]), int(oppo_move[7])),(int(oppo_move[11]), int(oppo_move[13])))
                 move: Move = Move(move_tuple[0][0], move_tuple[0][1], move_tuple[1][0], move_tuple[1][1])
 
         except:
             move: Move = Move(-1, -1, -1, -1)
+
+        print(move)
         return move
