@@ -17,9 +17,9 @@ class Gameboard:
 
         self.corners = {(0, 0), (self.board_size - 1, 0), (0, self.board_size - 1),
                         (self.board_size - 1, self.board_size - 1)}
-        self.center = {(self.board_size / 2, self.board_size / 2), (self.board_size / 2 - 1, self.board_size / 2),
-                       (self.board_size / 2, self.board_size / 2 - 1),
-                       (self.board_size / 2 - 1, self.board_size / 2 - 1)}
+        self.center = {(int(self.board_size / 2), int(self.board_size / 2)),    (int(self.board_size / 2 - 1), int(self.board_size / 2)),
+                       (int(self.board_size / 2), int(self.board_size / 2 - 1)),
+                       (int(self.board_size / 2 - 1), int(self.board_size / 2 - 1))}
 
     def is_valid_first(self, r, c, player):
         # First move valid if piece taken from center or corner
@@ -67,7 +67,7 @@ class Gameboard:
 
     def print_board(self, move_count):
         print("Move #" + str(move_count))
-        for row in range(self.board_size):
+        for row in range(self.board_size-1,-1,-1):
             for col in range(self.board_size):
                 if self.board[row][col]:
                     if (row + col) % 2 == 0:
@@ -96,11 +96,13 @@ class Gameboard:
                 self.set_piece(r, c1, False)
         self.set_piece(r2, c2, True)
 
-    # Snipers are the validly existing pieces that can potentially jump into (r, c)
-    # this function returns a list of tuples (r, c) of potential snipers
+    # Snipers are the validly existing pieces that can potentially jump into tile: (r, c)
+    # this function returns a list of tuples (r, c) of the snipers
     # i did a ton of math to figure this out :((
-    def snipers(self, r, c):
+    def snipers(self, tile):
         pieces = []
+        r = tile[0]
+        c = tile[1]
 
         neg_r_steps = 0
         pos_r_steps = 0
@@ -123,25 +125,36 @@ class Gameboard:
             pos_c_steps = int((self.board_size - (c+1))/2)
 
         for i in range(0, neg_r_steps):
-            row = r - 2 * (i + 1)
+            row = r - 2*(i+1)
             col = c
-            if self.is_filled(row, col):
+            if not self.board[row + 1][c]: break
+            elif self.board[row][col]:
                 pieces.append((row, col))
+                break
+
         for i in range(0, pos_r_steps):
-            row = r + 2 * (i + 1)
+            row = r + 2*(i+1)
             col = c
-            if self.is_filled(row, col):
+            if not self.board[row-1][col]: break
+            elif self.board[row][col]:
                 pieces.append((row, col))
+                break
+
         for i in range(0, neg_c_steps):
             row = r
-            col = c - 2 * (i + 1)
-            if self.is_filled(row, col):
+            col = c - 2*(i+1)
+            if not self.board[row][col+1]: break
+            elif self.board[row][col]:
                 pieces.append((row, col))
+                break
+
         for i in range(0, pos_c_steps):
             row = r
-            col = c + 2 * (i + 1)
-            if self.is_filled(row, col):
+            col = c + 2*(i+1)
+            if not self.board[row][col-1]: break
+            elif self.board[row][col]:
                 pieces.append((row, col))
+                break
 
         return pieces
 
@@ -156,11 +169,10 @@ class Gameboard:
         return empty
 
     # generates list of the empty tiles
-    # generates list of all potential pieces that could jump into the tile
-    # determines which of those pieces actually exist and can actually jump into the empty tiles
-    # those pieces that meet those conditions are moves
+    # generates list of pieces that can jump into each empty tile
+    # pieces and tiles formatted to be a valid move
     # pieces (r1, c1), empty tile (r2, c2)
-    # RETURNS: [(r1, c1), (r2, c2)]
+    # RETURNS: ((r1, c1), (r2, c2))
     def possible_moves(self):
         moves = []
 
@@ -168,11 +180,9 @@ class Gameboard:
 
         if len(empty_tiles) == 0:
             for i in self.corners:
-                move = (i, i)
-                moves.append(move)
+                moves.append((i, i))
             for i in self.center:
-                move = (i ,i)
-                moves.append(move)
+                moves.append((i, i))
             return moves
         elif len(empty_tiles) == 1:
             r, c = empty_tiles[0][0], empty_tiles[0][1]
@@ -180,30 +190,19 @@ class Gameboard:
             for i in range(0, len(m)):
                 if self.is_in_bounds(m[i][0], m[i][1]):
                     move = (m[i], m[i])
-                    moves.append(move)
+                    moves.append((m[i], m[i]))
             return moves
-
-        for tile in empty_tiles:
-            player = 0
-            r2 = tile[0]
-            c2 = tile[1]
-            if (r2 + c2) % 2 == 0:
-                player = 1
-            else:
-                player = 2
-            sniper_candidates = self.snipers(r2, c2)
-            for s in sniper_candidates:
-                r1 = s[0]
-                c1 = s[1]
-                if self.is_valid_jump(r1, c1, r2, c2, player):
-                    move = (s, tile)
-                    moves.append(move)
-
+        elif len(empty_tiles) >= 2:
+            for tile in empty_tiles:
+                candidates = self.snipers(tile)
+                for c in candidates:
+                    moves.append((c, tile))
         return moves
 
     # create a new Gameboard of the same size
     # set its board to be the same as the current Gameboard
     def clone(self):
         copy = Gameboard(self.board_size)
-        copy.board = self.board
+        for row in range(0, self.board_size):
+            copy.board[row] = self.board[row].copy()
         return copy

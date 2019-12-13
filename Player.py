@@ -6,9 +6,9 @@ from Gameboard import Gameboard
 
 
 class Player(ABC):
-    def __init__(self, name, is_top_left):
+    def __init__(self, name, is_bottom_left):
         self.name = name
-        self.is_top_left = is_top_left
+        self.is_bottom_left = is_bottom_left
 
     def __str__(self):
         return self.name

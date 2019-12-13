@@ -45,57 +45,42 @@ def telnet():
 
     if r1 == "Player:1":
         goes_first = True
-        color = "WHITE"
+        color = "NONE"
         first_move = "NONE"
     else:
         goes_first = False
         color = r1[6:]
-        print(color)
+        #print(color)
         #WHITE or BLACK
         r2 = tn.read_until(b"\n").decode('ASCII')[:-1]
-        print(r2)
+        #print(r2)
         #Player 2
         r3 = tn.read_until(b"\n").decode('ASCII')[:-1]
-        print(r3)
+        #print(r3)
         #Removed:[?:?]
         first_move = r3[8:]
-        print(first_move)
+        #print(first_move)
         #[?:?]
 
-    return tn, color, goes_first, first_move
+    return color, goes_first, first_move
 
 # ============= Main ============= #
 if __name__ == '__main__':
-    tn, c, gf, fm = telnet()
+    c, gf, fm = telnet()
 
-    if gf:
-        agent1 = Human(c, False)
-        remoteplayer2 = RemotePlayer("BLACK", True, tn)
-        game = Game(agent1, remoteplayer2, board_size)
-    else:
-        if c == "WHITE":
-            remoteplayer1 = RemotePlayer("BLACK", True, tn)
-            agent2 = Human(c, False)
-            game = Game(remoteplayer1, agent2, board_size)
+    if c == "NONE" and gf == True:
+        agent1 = Agent(c, gf)
+        agentc = agent1.get_color()
+        if agentc == "WHITE":
+            remoteplayer2 = RemotePlayer("BLACK", False)
         else:
-            remoteplayer1 = RemotePlayer("WHITE", False, tn)
-            agent2 = Human(c, True)
-            game = Game(remoteplayer1, agent2, board_size)
-
-    # if c == "NONE" and gf == True:
-    #     agent1 = Agent("WHITE", gf)
-    #     #agentc = agent1.get_color()
-    #     #if agentc == "WHITE":
-    #     if c == "NONE":
-    #         remoteplayer2 = RemotePlayer("BLACK", False)
-    #     else:
-    #         remoteplayer2 = RemotePlayer("WHITE", False)
-    # else:
-    #     remoteplayer1 = RemotePlayer(c, gf)
-    #     if c == "WHITE":
-    #         agent2 = Agent("BLACK", False)
-    #     else:
-    #         agent2 = Agent("WHITE", False)
+            remoteplayer2 = RemotePlayer("WHITE", False)
+    else:
+        remoteplayer1 = RemotePlayer(c, gf)
+        if c == "WHITE":
+            agent2 = Agent("BLACK", False)
+        else:
+            agent2 = Agent("WHITE", False)
 
     # human1 = Human('White', True)
     # human2 = Human('Black', False)
