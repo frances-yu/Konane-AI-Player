@@ -46,9 +46,9 @@ class Game:
             move = None
             while not valid_move:
                 if player_turn == 1:
-                    move = self.player1.get_move(self.board)
+                    move = self.player1.get_move(self.board, self.previous_move)
                 else:
-                    move = self.player2.get_move(self.board)
+                    move = self.player2.get_move(self.board, self.previous_move)
                 valid_move = self.is_valid_move(move, player_turn)
                 if not valid_move:
                     print("Not a valid move")
