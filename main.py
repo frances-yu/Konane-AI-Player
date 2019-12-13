@@ -45,7 +45,7 @@ def telnet():
     if r1 == "Player:1":
         goes_first = True
         color = "WHITE"
-        first_move = "NONE"
+        # first_move = "NONE"
     else:
         goes_first = False
         color = r1[6:]
@@ -54,8 +54,8 @@ def telnet():
         r2 = tn.read_until(b"\n").decode('ASCII')[:-1]
         print(r2)
         #Player 2
-        r3 = tn.read_until(b"\n").decode('ASCII')[:-1]
-        print(r3)
+        # r3 = tn.read_until(b"\n").decode('ASCII')[:-1]
+        # print(r3)
         #Removed:[?:?]
         # first_move = r3[8:]
         # print(first_move)
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     tn, c, gf = telnet()
 
     if gf:
-        agent1 = Agent(c, False)
+        agent1 = Agent("WHITE", False)
         remoteplayer2 = RemotePlayer("BLACK", True, tn)
         game = Game(agent1, remoteplayer2, board_size)
     else:
