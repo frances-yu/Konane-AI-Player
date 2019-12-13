@@ -142,9 +142,6 @@ class Agent(Player):
 
         return score
 
-    def is_terminal_state(self, board, agent_moveList, opp_moveList):
-        return len(agent_moveList) == 0 or len(opp_moveList) == 0
-
     # lookahead 2 moves
     # alpha-beta pruning hopefully
     # if depth = 0, agent's turn, find max
