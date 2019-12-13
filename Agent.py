@@ -182,22 +182,19 @@ class Agent(Player):
 
     def get_move(self, board):
 
-        move: Move = Move(-1,-1,-1,-1)
         empty = board.empty_tiles()
         if len(empty) <= 1:
             moves = board.possible_moves()
-            move.r1 = moves[0][0][0]
-            move.c1 = moves[0][0][1]
-            move.r2 = moves[0][1][0]
-            move.c2 = moves[0][1][1]
+            chosen_move = moves[0]
         else:
             score, best_move = self.minimax(board, 0, float('-inf'), float('inf'))
             print(best_move)
-
-            move.r1 = best_move[0][0]
-            move.c1 = best_move[0][1]
-            move.r2 = best_move[1][0]
-            move.c2 = best_move[1][1]
-
+            print(best_move[0])
+            print(best_move[1])
+            chosen_move = best_move
         print(" ")
+
+        move: Move = Move(chosen_move[0][0], chosen_move[0][1],
+                          chosen_move[1][0], chosen_move[1][1])
+
         return move
