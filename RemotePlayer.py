@@ -7,19 +7,27 @@ class RemotePlayer(Player):
     def __init__(self, name, is_bottom_left, tn):
         super().__init__(name, is_bottom_left)
         self.tn = tn
-        self.first = True
+        self.firstmove = True
+        self.remotefirst = False
+
+    def index_decoder(self, line):
+        new_line = ""
+        for x in line:
+            if x != "[" or x != "]":
+                new_line += x
+        L = new_line.split(":")
+        if len(L) == 2:
+            tup = ((int(L[0]),int(L[1])),(int(L[0]),int(L[1])))
+            return tup
+        else:
+            tup = ((int(L[0]),int(L[1])),(int(L[2]),int(L[3])))
+            return tup
 
     def get_move(self, board, prev_move):
         # Input move with format ((r1,c1),(r2,c2)) where r1,c1,r2,c2 are 0-indexed positions starting from top left
         # For first two moves, move formatted as (r1,c1)
         # For example, ((1,2),(1,4)) will move a piece at row 1, col 2 to a space at row 1, col 4
         # ((0,0),(0,0)) will take from the top left space on the first move
-
-        # ?Move(180000):
-        # [2:0]:[0:0]
-        # Move[2:0]:[0:0]
-        # Move[2:1]:[0:1]
-        # ?Move(162757):
 
         try:
             # q = tn.read_until(b"\n").decode('ASCII')[:-1]
@@ -28,12 +36,15 @@ class RemotePlayer(Player):
 
             if prev_move.r1 == -1 and prev_move.c1 == -1 and prev_move.r2 == -1 and prev_move.c2 == -1:
                 #if remote player goes first
-                #receive move from server and return get_move
+                #receive removed move from server and return get_move
                 oppo_move = self.tn.read_until(b"\n").decode('ASCII')[:-1]
-                move_tuple = ((int(oppo_move[11]), int(oppo_move[13])),(int(oppo_move[11]), int(oppo_move[13])))
+                print(oppo_move)
+                print(oppo_move[9:])
+                move_tuple = self.index_decoder(oppo_move[9:])
+                print(move_tuple)
                 move: Move = Move(move_tuple[0][0], move_tuple[0][1], move_tuple[1][0], move_tuple[1][1])
-                self.first = True
                 print("in prev move")
+                self.remotefirst = True
             else:
                 #prev_move is in form ((?,?),(?,?))
                 #if agent goes first
@@ -45,34 +56,62 @@ class RemotePlayer(Player):
                 m3 = str(prev_move.r2).encode('ASCII')
                 m4 = str(prev_move.c2).encode('ASCII')
 
-                if self.first:
-                    agent_move = b"[" + m1 + b":" + m2 + b"]"
-                    self.first = False
+                if self.firstmove:
+                    if self.remotefirst:
+                        self.tn.read_until(b"?Remove:")
+                        agent_move = b"[" + m1 + b":" + m2 + b"]"
+                        self.tn.write(agent_move + b"\r\n")
+                        print(agent_move.decode('ASCII'))
 
-                    print(agent_move.decode('ASCII'))
-                    self.tn.write(agent_move + b"\r\n")
+                        repeat_agent_move = self.tn.read_until(b"\n").decode('ASCII')[:-1]
+                        print(repeat_agent_move)
 
-                    repeat = self.tn.read_until(b"\n").decode('ASCII')[:-1]
-                    print(repeat)
+                        oppo_move = self.tn.read_until(b"\n").decode('ASCII')[:-1]
+                        print(oppo_move)
+                        print(oppo_move[8:])
+                        move_tuple = self.index_decoder(oppo_move[8:])
+                        print(move_tuple)
+                        move: Move = Move(move_tuple[0][0], move_tuple[0][1], move_tuple[1][0], move_tuple[1][1])
 
-                    oppo_move = self.tn.read_until(b"\n").decode('ASCII')[:-1]
-                    print(oppo_move)
+                        self.firstmove = False
 
-                    #add more here
+                    else:
+                        self.tn.read_until(b"?Remove:")
+                        agent_move = b"[" + m1 + b":" + m2 + b"]"
+                        self.tn.write(agent_move + b"\r\n")
+                        print(agent_move.decode('ASCII'))
+
+                        state_color = self.tn.read_until(b"\n").decode('ASCII')[:-1]
+                        print(state_color)
+
+                        repeat_agent_move = self.tn.read_until(b"\n").decode('ASCII')[:-1]
+                        print(repeat_agent_move)
+
+                        oppo_move = self.tn.read_until(b"\n").decode('ASCII')[:-1]
+                        print(oppo_move)
+                        print(oppo_move[8:])
+                        move_tuple = self.index_decoder(oppo_move[8:])
+                        print(move_tuple)
+                        move: Move = Move(move_tuple[0][0], move_tuple[0][1], move_tuple[1][0], move_tuple[1][1])
+
+                        self.firstmove = False
 
                 else:
-                    agent_move = b"[" + m1 + b":" + m2 + b"]:[" + m3 + b"]"
-
+                    agent_move = b"[" + m1 + b":" + m2 + b"]:[" + m3 + b":" + m4 + b"]"
                     print(agent_move.decode('ASCII'))
                     self.tn.write(agent_move + b"\r\n")
 
-                    repeat = self.tn.read_until(b"\n").decode('ASCII')[:-1]
-                    print(repeat)
+                    repeat_agent_move = self.tn.read_until(b"\n").decode('ASCII')[:-1]
+                    print(repeat_agent_move)
 
                     oppo_move = self.tn.read_until(b"\n").decode('ASCII')[:-1]
                     print(oppo_move)
+                    print(oppo_move[3:])
+                    move_tuple = self.index_decoder(oppo_move[3:])
+                    print(move_tuple)
+                    move: Move = Move(move_tuple[0][0], move_tuple[0][1], move_tuple[1][0], move_tuple[1][1])
 
-                move_tuple = ((int(oppo_move[5]), int(oppo_move[7])),(int(oppo_move[11]), int(oppo_move[13])))
+                move_tuple = self.index_decoder(oppo_move[4:])
                 move: Move = Move(move_tuple[0][0], move_tuple[0][1], move_tuple[1][0], move_tuple[1][1])
 
         except:
