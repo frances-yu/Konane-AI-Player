@@ -194,5 +194,6 @@ class Agent(Player):
             m = moves[0]
         else:
             score, m = self.minimax(board, 0, float('-inf'), float('inf'))
+        print(m)
         move: Move = Move(m[0][0], m[0][1], m[1][0], m[1][1])
         return move
