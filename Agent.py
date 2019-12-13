@@ -20,7 +20,8 @@ class Agent(Player):
         #   3 = weighting for a player's corner pieces
         # positive weight for agent
         # negative weight for opponent
-        self.weights = [1, 1, 1, 1]
+        self.weights = [3,1,0,0]
+        # [3,1,0,0] learned from Trainer.py
 
     def set_weights(self, array):
         for i in range(0, len(array)):
