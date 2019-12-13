@@ -22,6 +22,13 @@ class Agent(Player):
         # negative weight for opponent
         self.weights = [1, 1, 1, 1]
 
+    def set_weights(self, array):
+        for i in range(0, len(array)):
+            self.weights[i] = array[i]
+
+    def weight(self):
+        return self.weights
+
     # counts total number of pieces available to a player
     def pieceCount(self, board, is_bottom_left):
         size = board.board_size
