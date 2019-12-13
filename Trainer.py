@@ -15,8 +15,8 @@ def adjust(i, weights, adj_factor, pos = True, count = 0):
         new[i] -= adj_factor
         if new[i] < 0: new[i] = 0
 
-    w = Agent("White", False)
-    b = Agent("Black", True)
+    w = Agent("WHITE", False)
+    b = Agent("BLACK", True)
     w.set_weights(new)
     b.set_weights(cur)
     g = Game(w, b, SIZE)
@@ -35,8 +35,8 @@ def best_weight(i, baseline, adj):
     pos = adjust(i, baseline, adj)
     neg = adjust(i, baseline, adj, False)
 
-    w = Agent("White", False)
-    b = Agent("Black", True)
+    w = Agent("WHITE", False)
+    b = Agent("BLACK", True)
     w.set_weights(pos)
     b.set_weights(neg)
     g = Game(w,b,SIZE)
@@ -76,8 +76,8 @@ def compare(factors):
     victory_points = []
 
     for i in range(0, len(weight_list)):
-        w = Agent("White", False)
-        b = Agent("Black", True)
+        w = Agent("WHITE", False)
+        b = Agent("BLACK", True)
         v = 0
         w.set_weights(weight_list[i])
         b.set_weights(weight_list[i])
