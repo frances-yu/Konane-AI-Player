@@ -39,7 +39,7 @@ def telnet():
     games = tn.read_until(b"\n").decode('ASCII')[:-1]
     #print(games)
     r1 = tn.read_until(b"\n").decode('ASCII')[:-1]
-    print(r1)
+    #print(r1)
     #Color:????? or Player:1
 
     if r1 == "Player:1":
@@ -52,7 +52,7 @@ def telnet():
         #print(color)
         #WHITE or BLACK
         r2 = tn.read_until(b"\n").decode('ASCII')[:-1]
-        print(r2)
+        #print(r2)
         #Player 2
         # r3 = tn.read_until(b"\n").decode('ASCII')[:-1]
         # print(r3)
