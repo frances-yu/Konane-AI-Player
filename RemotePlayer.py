@@ -25,12 +25,30 @@ class RemotePlayer(Player):
             time_left = q[6:]
             time_left = time_left[:-2]
 
+            if prev_move is None:
+                #if remote player goes first
+                #receive move from server and return get_move
+                oppo_move = tn.read_until(b"\n").decode('ASCII')[:-1]
+                move_tuple = ((int(oppo_move[5]), int(oppo_move[7])),(int(oppo_move[11]), int(oppo_move[13])))
+                move: Move = Move(move_tuple[0][0], move_tuple[0][1], move_tuple[1][0], move_tuple[1][1])
+            else:
+                #prev_move is in form ((?,?),(?,?))
+                #if agent goes first
+                #send move to server
+                #wait
+                #receive move from server and return get_move
+                m1 = str(prev_move[0][0]).encode('ASCII')
+                m2 = str(prev_move[0][1]).encode('ASCII')
+                m3 = str(prev_move[1][0]).encode('ASCII')
+                m4 = str(prev_move[1][1]).encode('ASCII')
+                agent_move = b"[" + m1 + b":" + m2 + b"]:[" + m3 + b"]"
+                tn.write(agent_move + b"\r\n")
+                repeat = tn.read_until(b"\n").decode('ASCII')[:-1]
 
+                oppo_move = tn.read_until(b"\n").decode('ASCII')[:-1]
+                move_tuple = ((int(oppo_move[5]), int(oppo_move[7])),(int(oppo_move[11]), int(oppo_move[13])))
+                move: Move = Move(move_tuple[0][0], move_tuple[0][1], move_tuple[1][0], move_tuple[1][1])
 
-
-
-            move_tuple = eval(input("Enter move for " + self.name + ": "))
-            move: Move = Move(move_tuple[0][0], move_tuple[0][1], move_tuple[1][0], move_tuple[1][1])
         except:
             move: Move = Move(-1, -1, -1, -1)
         return move

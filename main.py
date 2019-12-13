@@ -68,18 +68,20 @@ def telnet():
 if __name__ == '__main__':
     tn, c, gf, fm = telnet()
 
+    # Change Human to Agent
+
     if gf:
-        agent1 = Human(c, False)
+        agent1 = Agent(c, False)
         remoteplayer2 = RemotePlayer("BLACK", True, tn)
         game = Game(agent1, remoteplayer2, board_size)
     else:
         if c == "WHITE":
             remoteplayer1 = RemotePlayer("BLACK", True, tn)
-            agent2 = Human(c, False)
+            agent2 = Agent(c, False)
             game = Game(remoteplayer1, agent2, board_size)
         else:
             remoteplayer1 = RemotePlayer("WHITE", False, tn)
-            agent2 = Human(c, True)
+            agent2 = Agent(c, True)
             game = Game(remoteplayer1, agent2, board_size)
 
     # if c == "NONE" and gf == True:
