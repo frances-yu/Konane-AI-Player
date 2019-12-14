@@ -62,6 +62,7 @@ class Game:
                     color = self.player2.name
                     move = self.player2.get_move(self.board, self.previous_move)
                 if move is None:
+                    done = True
                     break
                 valid_move = self.is_valid_move(move, color)
                 if not valid_move:
