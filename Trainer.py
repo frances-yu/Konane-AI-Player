@@ -1,9 +1,9 @@
 from Game import Game
 from Agent import Agent
 
-SIZE = 18
-SMALL_EPOCH = 5
-BIG_EPOCH = 5
+SIZE = 10
+SMALL_EPOCH = 2
+BIG_EPOCH = 10
 
 def adjust(i, weights, adj_factor, pos = True, count = 0):
     if count == SMALL_EPOCH: return weights
@@ -51,7 +51,7 @@ def adjust_weights(base, adj):
     for i in range(0, len(bw)):
         clone = bw.copy()
         bw = best_weight(i, clone, adj)
-    bw = [int(x) for x in bw]
+    #bw = [int(x) for x in bw]
     return bw
 
 def cycle(baseline, adj):

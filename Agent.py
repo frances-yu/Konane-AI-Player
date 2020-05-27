@@ -1,5 +1,7 @@
 # Agent.py
 # Contains all input streams and handling for artificial intelligence
+import random
+
 from Game import Move
 from Gameboard import Gameboard
 from Player import Player
@@ -20,7 +22,7 @@ class Agent(Player):
         #   3 = weighting for a player's corner pieces
         # positive weight for agent
         # negative weight for opponent
-        self.weights = [3,1,0,0]
+        self.weights = [3.76,.52,0.05,0.02]
         # [3,1,0,0] learned from Trainer.py
 
     def set_weights(self, array):
@@ -199,7 +201,7 @@ class Agent(Player):
         empty = board.empty_tiles()
         if len(empty) <= 1:
             moves = self.agent_move_list(board)
-            m = moves[0]
+            m = random.choice(moves)
         else:
             score, m = self.minimax(board, 0, float('-inf'), float('inf'))
         move: Move = Move(m[0][0], m[0][1], m[1][0], m[1][1])
